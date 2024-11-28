@@ -125,6 +125,10 @@ wget https://github.com/WJQSERVER/sshg/releases/download/${VERSION}/sshg-linux-$
 install tar
 # 解压SSHG
 tar -zxvf /usr/local/sshg.tar.gz -C /usr/local/sshg
+# 修改文件名
+mv /usr/local/sshg/sshg-linux-$ARCH /usr/local/sshg/sshg
+# 删除压缩包
+rm /usr/local/sshg.tar.gz
 # 赋予执行权限
 chmod +x /usr/local/sshg/sshg
 
