@@ -59,7 +59,12 @@ func init() {
 
 func main() {
 	//sys.CheckJounal(cfg)
-	go action.TGBotListen(cfg.TGBot.Token, cfg.TGBot.ChatID, cfg.Server.SSHPort)
+	go func() {
+		err := action.TGBotListen(cfg.TGBot.Token, cfg.TGBot.ChatID, cfg.Server.SSHPort)
+		if err != nil {
+			logError("Failed to start TGBot: %v", err)
+		}
+	}()
 	sys.CheckJounal(cfg)
 	defer logger.Close() // 确保在退出时关闭日志文件
 }

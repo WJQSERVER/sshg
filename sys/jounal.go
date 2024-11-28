@@ -49,30 +49,42 @@ func CheckJounal(cfg *config.Config) {
 
 			// 检查登录成功的日志
 			if strings.Contains(line, "Accepted password for") {
+				err := core.Callback(0, line, cfg)
+				if err != nil {
+					logError("JournalCallback error: %v", err)
+				}
 				fmt.Println("SSH 登录成功:", line)
 				logInfo("SSH 登录成功: %s", line)
-				core.JournalCallback(0, line, cfg)
 			}
 
 			// 检查登录失败的日志
 			if strings.Contains(line, "Failed password for") {
+				err := core.Callback(1, line, cfg)
+				if err != nil {
+					logError("JournalCallback error: %v", err)
+				}
 				fmt.Println("SSH 登录失败:", line)
 				logWarning("SSH 登录失败: %s", line)
-				core.JournalCallback(1, line, cfg)
 			}
 
 			// 检查连接关闭的日志
 			if strings.Contains(line, "Connection closed by") {
+				err := core.Callback(100, line, cfg)
+				if err != nil {
+					logError("JournalCallback error: %v", err)
+				}
 				fmt.Println("SSH 连接关闭:", line)
 				logInfo("SSH 连接关闭: %s", line)
-				core.JournalCallback(100, line, cfg)
 			}
 
 			// 检查 kex_exchange_identification 错误
 			if strings.Contains(line, "kex_exchange_identification") {
 				fmt.Println("SSH 错误:", line)
 				logError("SSH 错误: %s", line)
-				core.JournalCallback(2, line, cfg)
+				err := core.Callback(2, line, cfg)
+				if err != nil {
+					logError("JournalCallback error: %v", err)
+				}
 			}
 		}
 

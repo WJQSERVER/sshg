@@ -6,42 +6,102 @@ import (
 	"regexp"
 	"sshg/action"
 	"sshg/config"
+	"sshg/logger"
 	"time"
+)
+
+var (
+	logw       = logger.Logw
+	logInfo    = logger.LogInfo
+	logWarning = logger.LogWarning
+	logError   = logger.LogError
 )
 
 func Core() (err error) {
 	return nil
 }
 
-func JournalCallback(cade int, msg string, cfg *config.Config) error {
-	switch cade {
-	case 0:
-		fmsg, _, err := formatMsg(msg, 0, cfg)
-		if err != nil {
-			return err
-		}
-		action.TGBot(cfg.TGBot.ChatID, cfg.TGBot.Token, fmsg)
-	case 1:
-		fmsg, _, err := formatMsg(msg, 1, cfg)
-		if err != nil {
-			return err
-		}
-		action.TGBot(cfg.TGBot.ChatID, cfg.TGBot.Token, fmsg)
-	case 2:
-		fmsg, _, err := formatMsg(msg, 2, cfg)
-		if err != nil {
-			return err
-		}
-		action.TGBot(cfg.TGBot.ChatID, cfg.TGBot.Token, fmsg)
-	case 100:
-		fmsg, _, err := formatMsg(msg, 100, cfg)
-		if err != nil {
-			return err
-		}
-		action.TGBot(cfg.TGBot.ChatID, cfg.TGBot.Token, fmsg)
+func Callback(code int, msg string, cfg *config.Config) error {
+	/*	switch code {
+		case 0:
+			logInfo(msg)
+			fmsg, _, err := formatMsg(msg, 0, cfg)
+			if err != nil {
+				return err
+			}
+			action.TGBot(cfg.TGBot.ChatID, cfg.TGBot.Token, fmsg)
+		case 1:
+			fmsg, _, err := formatMsg(msg, 1, cfg)
+			if err != nil {
+				return err
+			}
+			action.TGBot(cfg.TGBot.ChatID, cfg.TGBot.Token, fmsg)
+		case 2:
+			fmsg, _, err := formatMsg(msg, 2, cfg)
+			if err != nil {
+				return err
+			}
+			action.TGBot(cfg.TGBot.ChatID, cfg.TGBot.Token, fmsg)
+		case 100:
+			fmsg, _, err := formatMsg(msg, 100, cfg)
+			if err != nil {
+				return err
+			}
+			action.TGBot(cfg.TGBot.ChatID, cfg.TGBot.Token, fmsg)
 
-	default:
+		default:
+			return errors.New("invalid code")
+		}
+		return nil*/
+	vaildCode := []int{0, 1, 2, 100}
+	if !contains(vaildCode, code) {
 		return errors.New("invalid code")
+	}
+
+	if code == 0 {
+		logInfo(msg)
+	}
+
+	fmsg, _, err := formatMsg(msg, code, cfg)
+	if err != nil {
+		return err
+	}
+	logw(fmsg)
+	err = action.TGBot(cfg.TGBot.ChatID, cfg.TGBot.Token, fmsg)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// 检查切片中是否包含指定的元素
+func contains(slice []int, val int) bool {
+	for _, v := range slice {
+		if v == val {
+			return true
+		}
+	}
+	return false
+}
+
+func ToBot(code int, msg string, cfg *config.Config) error {
+	vaildCode := []int{0, 1, 2, 100}
+	if !contains(vaildCode, code) {
+		return errors.New("invalid code")
+	}
+
+	if code == 0 {
+		logInfo(msg)
+	}
+
+	fmsg, _, err := formatMsg(msg, code, cfg)
+	if err != nil {
+		return err
+	}
+	logw(fmsg)
+	err = action.TGBot(cfg.TGBot.ChatID, cfg.TGBot.Token, fmsg)
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -51,10 +111,10 @@ func formatMsg(msg string, code int, cfg *config.Config) (fmsg string, ip string
 	switch code {
 	case 0:
 		// 匹配 Accepted 日志
-		pattern = `(\w+\s+\d+\s+\d+:\d+:\d+).*?Accepted password for (\w+) from ([\w:]+) port (\d+)`
+		pattern = `(\w+\s+\d+\s+\d+:\d+:\d+).*?Accepted password for (\w+) from ([\w.:]+) port (\d+)`
 	case 1:
 		// 匹配 Failed 日志
-		pattern = `(\w+\s+\d+:\d+:\d+).*?Failed password for (\w+) from ([\w:]+) port (\d+)`
+		pattern = `(\w+\s+\d+:\d+:\d+).*?Failed password for (\w+) from ([\w.:]+) port (\d+)`
 	case 2:
 		// 匹配 kex_exchange_identification 日志
 		pattern = `(\w+\s+\d+\s+\d+:\d+:\d+).*?kex_exchange_identification: (\w+)`
@@ -64,7 +124,7 @@ func formatMsg(msg string, code int, cfg *config.Config) (fmsg string, ip string
 			Nov 28 02:13:13 wjqserver01 sshd[2089180]: Connection closed by 2a06:4880:3000::36 port 53835
 			Nov 28 02:13:14 wjqserver01 sshd[2089181]: Connection closed by 2a06:4880:3000::36 port 55733 [preauth]
 		*/
-		pattern = `(\w+\s+\d+\s+\d+:\d+:\d+).*?Connection closed by ([\w:]+) port (\d+)`
+		pattern = `(\w+\s+\d+\s+\d+:\d+:\d+).*?Connection closed by ([\w.:]+) port (\d+)`
 	default:
 		return "", "", errors.New("invalid code")
 	}
@@ -97,11 +157,13 @@ func formatMsg(msg string, code int, cfg *config.Config) (fmsg string, ip string
 	if code == 2 {
 		//result = fmt.Sprintf("Time: %s > kex_exchange_identification: %s", formattedTime, matches[2])
 		result = fmt.Sprintf("主机 %s \n**Time:** %s \n**kex_exchange_identification:** %s", cfg.Server.Hostname, formattedTime, matches[2])
+		logWarning(result)
 	} else if code == 100 {
 		ipAddress := matches[2]
 		port := matches[3]
 		//result = fmt.Sprintf("Time: %s > Connection closed by %s port %s", formattedTime, ipAddress, port)
 		result = fmt.Sprintf("主机 %s \n**Time:** %s \n**Connection closed by** %s **port** %s", cfg.Server.Hostname, formattedTime, ipAddress, port)
+		logWarning(result)
 	} else if code == 0 {
 		username := matches[2]
 		ipAddress := matches[3]
@@ -109,12 +171,14 @@ func formatMsg(msg string, code int, cfg *config.Config) (fmsg string, ip string
 		//result = fmt.Sprintf("Time: %s > As User %s from %s:%s, Login Succeeded", formattedTime, username, ipAddress, port)
 		//result = fmt.Sprintf("**Time:** %s \n \n **Login as** %s from [%s]:%s \n**Login Succeeded**", formattedTime, username, ipAddress, port)
 		result = fmt.Sprintf("主机 %s \n**Time:** %s \n**Login as** %s from [%s]:%s \n**Login Succeeded**", cfg.Server.Hostname, formattedTime, username, ipAddress, port)
+		logInfo(result)
 	} else if code == 1 {
 		username := matches[2]
 		ipAddress := matches[3]
 		port := matches[4]
 		//result = fmt.Sprintf("Time: %s > As User %s from %s:%s, Login Failed", formattedTime, username, ipAddress, port)
 		result = fmt.Sprintf("主机 %s \n**Time:** %s \n**Login as** %s from [%s]:%s \n**Login Failed**", cfg.Server.Hostname, formattedTime, username, ipAddress, port)
+		logWarning(result)
 	}
 	return result, ipAddress, nil
 }

@@ -6,13 +6,14 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func TGBot(chatID int64, token string, msgtext string) {
+func TGBot(chatID int64, token string, msgtext string) error {
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	//发送消息(无阻塞)(协程)
 	go sendMsg(bot, chatID, msgtext)
+	return nil
 }
 
 // 发送消息
@@ -23,10 +24,10 @@ func sendMsg(bot *tgbotapi.BotAPI, chatID int64, msgtext string) {
 	bot.Send(msg)
 }
 
-func TGBotListen(token string, chatID int64, port string) {
+func TGBotListen(token string, chatID int64, port string) error {
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	// 监听消息(无阻塞)(协程)
 	updateConfig := tgbotapi.NewUpdate(0)
@@ -35,6 +36,7 @@ func TGBotListen(token string, chatID int64, port string) {
 	for update := range updates {
 		go ListenMsg(bot, update, port)
 	}
+	return nil
 }
 
 // 监听消息
