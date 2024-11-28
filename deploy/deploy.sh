@@ -120,7 +120,7 @@ VERSION=$(curl -s https://raw.githubusercontent.com/WJQSERVER/sshg/main/VERSION)
 wget -q -O /usr/local/sshg/VERSION https://raw.githubusercontent.com/WJQSERVER/sshg/main/VERSION
 
 # 拉取最新版本的SSHG
-wget https://github.com/WJQSERVER/sshg/releases/${VERSION}/download/sshg-linux-$ARCH.tar.gz -O /usr/local/sshg.tar.gz
+wget https://github.com/WJQSERVER/sshg/releases/download/${VERSION}/sshg-linux-$ARCH.tar.gz -O /usr/local/sshg.tar.gz
 # 解压SSHG
 install tar
 # 解压SSHG
