@@ -88,7 +88,7 @@ hostname = "$hostname"
 
 [tgbot]
 token = "$token"
-chatid = "$chat_id"
+chatid = $chat_id
 
 [log]
 logfilepath = "/var/log/sshg.log" 
