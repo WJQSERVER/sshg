@@ -1,0 +1,10 @@
+[server]
+hostname = ""
+
+[tgbot]
+token = "YOUR_BOT_TOKEN_HERE"
+chatid = "YOUR_CHAT_ID_HERE"
+
+[log]
+logfilepath = "/var/log/sshg.log" 
+maxlogsize = 5 # MB
