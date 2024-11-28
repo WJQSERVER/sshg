@@ -5,9 +5,10 @@ import (
 )
 
 type Config struct {
-	Server ServerConfig
-	TGBot  TGBotConfig
-	Log    LogConfig
+	Server  ServerConfig
+	TGBot   TGBotConfig
+	Log     LogConfig
+	MsgHook MsgHookConfig
 }
 
 type ServerConfig struct {
@@ -23,6 +24,12 @@ type TGBotConfig struct {
 type LogConfig struct {
 	LogFilePath string `toml:"logfilepath"`
 	MaxLogSize  int    `toml:"maxlogsize"`
+}
+
+type MsgHookConfig struct {
+	Enabled bool   `toml:"enabled"`
+	URL     string `toml:"url"`
+	Token   string `toml:"token"`
 }
 
 // LoadConfig 从 TOML 配置文件加载配置

@@ -3,7 +3,7 @@ package action
 import (
 	"strings"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	tgbotapi "github.com/OvyFlash/telegram-bot-api"
 )
 
 func TGBot(chatID int64, token string, msgtext string) error {

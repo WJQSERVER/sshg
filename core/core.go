@@ -120,10 +120,6 @@ func formatMsg(msg string, code int, cfg *config.Config) (fmsg string, ip string
 		pattern = `(\w+\s+\d+\s+\d+:\d+:\d+).*?kex_exchange_identification: (\w+)`
 
 	case 100:
-		/*
-			Nov 28 02:13:13 wjqserver01 sshd[2089180]: Connection closed by 2a06:4880:3000::36 port 53835
-			Nov 28 02:13:14 wjqserver01 sshd[2089181]: Connection closed by 2a06:4880:3000::36 port 55733 [preauth]
-		*/
 		pattern = `(\w+\s+\d+\s+\d+:\d+:\d+).*?Connection closed by ([\w.:]+) port (\d+)`
 	default:
 		return "", "", errors.New("invalid code")
@@ -155,28 +151,24 @@ func formatMsg(msg string, code int, cfg *config.Config) (fmsg string, ip string
 		ipAddress string
 	)
 	if code == 2 {
-		//result = fmt.Sprintf("Time: %s > kex_exchange_identification: %s", formattedTime, matches[2])
 		result = fmt.Sprintf("主机 %s \n**Time:** %s \n**kex_exchange_identification:** %s", cfg.Server.Hostname, formattedTime, matches[2])
 		logWarning(result)
 	} else if code == 100 {
 		ipAddress := matches[2]
 		port := matches[3]
-		//result = fmt.Sprintf("Time: %s > Connection closed by %s port %s", formattedTime, ipAddress, port)
 		result = fmt.Sprintf("主机 %s \n**Time:** %s \n**Connection closed by** %s **port** %s", cfg.Server.Hostname, formattedTime, ipAddress, port)
 		logWarning(result)
 	} else if code == 0 {
 		username := matches[2]
 		ipAddress := matches[3]
 		port := matches[4]
-		//result = fmt.Sprintf("Time: %s > As User %s from %s:%s, Login Succeeded", formattedTime, username, ipAddress, port)
-		//result = fmt.Sprintf("**Time:** %s \n \n **Login as** %s from [%s]:%s \n**Login Succeeded**", formattedTime, username, ipAddress, port)
-		result = fmt.Sprintf("主机 %s \n**Time:** %s \n**Login as** %s from [%s]:%s \n**Login Succeeded**", cfg.Server.Hostname, formattedTime, username, ipAddress, port)
+		//result = fmt.Sprintf("主机 %s \n**Time:** %s \n**Login as** %s from [%s]:%s \n**Login Succeeded**", cfg.Server.Hostname, formattedTime, username, ipAddress, port)
+		result = fmt.Sprintf("**主机** %s \n**Time:** %s \n**Login as** %s from [%s]:%s \n**Login Succeeded**\n![👍](tg://emoji?id=5368324170671202286)", cfg.Server.Hostname, formattedTime, username, ipAddress, port)
 		logInfo(result)
 	} else if code == 1 {
 		username := matches[2]
 		ipAddress := matches[3]
 		port := matches[4]
-		//result = fmt.Sprintf("Time: %s > As User %s from %s:%s, Login Failed", formattedTime, username, ipAddress, port)
 		result = fmt.Sprintf("主机 %s \n**Time:** %s \n**Login as** %s from [%s]:%s \n**Login Failed**", cfg.Server.Hostname, formattedTime, username, ipAddress, port)
 		logWarning(result)
 	}

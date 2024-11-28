@@ -8,3 +8,8 @@ chatid = "YOUR_CHAT_ID_HERE"
 [log]
 logfilepath = "/var/log/sshg.log" 
 maxlogsize = 5 # MB
+
+[msghook]
+enable = true
+url = ""
+token = "YOUR_TOKEN_HERE"

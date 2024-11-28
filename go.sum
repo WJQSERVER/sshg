@@ -1,4 +1,4 @@
 github.com/BurntSushi/toml v1.4.0 h1:kuoIxZQy2WRRk1pttg9asf+WVv6tWQuBNVmK8+nqPr0=
 github.com/BurntSushi/toml v1.4.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
-github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1 h1:wG8n/XJQ07TmjbITcGiUaOtXxdrINDz1b0J1w0SzqDc=
-github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1/go.mod h1:A2S0CWkNylc2phvKXWBBdD3K0iGnDBGbzRpISP2zBl8=
+github.com/OvyFlash/telegram-bot-api v0.0.0-20241107191146-851f2334eccf h1:251Y8IYF/xv9NwGYjPPmmDYMHxW8v9rMe9pJzO3p0PQ=
+github.com/OvyFlash/telegram-bot-api v0.0.0-20241107191146-851f2334eccf/go.mod h1:pXEWqoOf5pKa4257nw03IyJzKyOBU0fgC88CaHGHzkQ=
